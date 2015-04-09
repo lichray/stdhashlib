@@ -180,6 +180,68 @@ and possible to support (without duplicated work) on the major platforms.
 
 ## Technical Specifications
 
+This section gives the layout of a wording.
+
+> ### Header `<hashlib>` synopsis
+
+    namespace std::hashlib {  // N4026
+
+      template <typename HashProvider>
+      struct hasher
+      {
+        static constexpr auto digest_size = HashProvider::digest_size;
+        static constexpr auto block_size  = HashProvider::block_size;
+
+        typedef typename HashProvider::context_type      context_type;
+        typedef std::array<unsigned char, digest_size>   digest_type;
+
+        hasher();
+
+        explicit hasher(char const* s);
+        explicit hasher(char const* s, size_t n);
+
+        template <typename StringLike>
+          explicit hasher(StringLike const& bytes);
+
+        void update(char const* s);
+        void update(char const* s, size_t n);
+
+        template <typename StringLike>
+          void update(StringLike const& bytes);
+
+        digest_type digest() const;
+
+        template <typename CharT = char,
+                  typename Traits = char_traits<CharT>,
+                  typename Allocator = allocator<CharT>>
+          basic_string<CharT, Traits, Allocator>
+            hexdigest() const;
+
+      private:
+        context_type ctx_;  // exposition only
+      };
+
+      template <typename HashProvider>
+      bool operator==(hasher<HashProvider> const& a,
+                      hasher<HashProvider> const& b);
+
+      template <typename HashProvider>
+      bool operator!=(hasher<HashProvider> const& a,
+                      hasher<HashProvider> const& b);
+
+      template <typename CharT, typename Traits,
+                typename HashProvider>
+        basic_ostream<CharT, Traits>&
+          operator<<(basic_ostream<CharT, Traits>& out,
+                     hasher<HashProvider> const& h);
+
+      typedef hasher<unspecified>   md5;
+      typedef hasher<unspecified>   sha1;
+      typedef hasher<unspecified>   sha256;
+      typedef hasher<unspecified>   sha512;
+
+    }
+
 ## Implementation
 
 A prototype is available at
