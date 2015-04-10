@@ -359,7 +359,7 @@ post: <tt>c</tt> is not ready to accept data input.<br>
       template <typename CharT, typename Traits,
                 typename HashProvider>
         basic_ostream<CharT, Traits>&
-          operator<<(basic_ostream<CharT, Traits>& out,
+          operator<<(basic_ostream<CharT, Traits>& os,
                      hasher<HashProvider> const& h);
 
       typedef hasher<unspecified>   md5;
@@ -368,6 +368,81 @@ post: <tt>c</tt> is not ready to accept data input.<br>
       typedef hasher<unspecified>   sha512;
 
     }
+
+> ### Class template `hasher`
+
+    hasher() noexcept;
+
+> _Effects:_ Constructs an object of `hasher` by calling
+> `HashProvider::init(&ctx_)`.
+
+    explicit hasher(char const* s);
+
+> _Effects:_ Equivalent to calling `update(s)` on a default
+> initialized `*this`.
+
+    explicit hasher(char const* s, size_t n);
+
+> _Effects:_ Equivalent to calling `update(s, n)` on a default
+> initialized `*this`.
+
+    template <typename StringLike>
+      explicit hasher(StringLike const& bytes) noexcept;
+
+> _Effects:_ Equivalent to calling `update(bytes)` on a default
+> initialized `*this`.
+
+    void update(char const* s);
+
+> _Effects:_ Equivalent to `update(s, strlen(s))`.
+
+    void update(char const* s, size_t n);
+
+> _Effects:_ Equivalent to `HashProvider::update(&ctx_, s, n)`.
+
+    template <typename StringLike>
+      void update(StringLike const& bytes) noexcept;
+
+> _Effects:_ Equivalent to `update(bytes.data(), bytes.size())`.
+
+    digest_type digest() const noexcept;
+
+> Let `md` be a default constructed object of `digest_type`.
+
+> _Effects:_ Equivalent to
+
+        auto tmp_ctx = ctx_;
+        HashProvider::final(md.data(), &tmp_ctx);
+
+> _Returns:_ `md`.
+
+    template <typename CharT = char,
+              typename Traits = char_traits<CharT>,
+              typename Allocator = allocator<CharT>>
+      basic_string<CharT, Traits, Allocator>
+        hexdigest() const;
+
+> TBD
+
+    template <typename HashProvider>
+    bool operator==(hasher<HashProvider> const& a,
+                    hasher<HashProvider> const& b) noexcept;
+
+> _Returns:_ `a.digest() == b.digest()`.
+
+    template <typename HashProvider>
+    bool operator!=(hasher<HashProvider> const& a,
+                    hasher<HashProvider> const& b) noexcept;
+
+> _Returns:_ `!(a == b)`.
+
+    template <typename CharT, typename Traits,
+              typename HashProvider>
+      basic_ostream<CharT, Traits>&
+        operator<<(basic_ostream<CharT, Traits>& os,
+                   hasher<HashProvider> const& h);
+
+> _Effects:_ Equivalent to `os << h.template hexdigest<CharT, Traits>()`.
 
 ## Implementation
 
