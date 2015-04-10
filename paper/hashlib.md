@@ -182,6 +182,20 @@ and possible to support (without duplicated work) on the major platforms.
 
 This section gives the layout of a wording.
 
+> ## Message digests
+
+> This subclause defines a class template `hasher` as a common interface to
+> the cryptographic hash and message digest algorithms, and the typedefs
+> `sha1`, `sha256`, `sha512`, and `md5` for the unspecified specializations of
+> `hasher` to implement, respectively, the FIPS secure hash algorithms SHA1,
+> SHA256, and SHA512 \[FIPS 180-2] as well as RSA's MD5 algorithm \[RFC 1321].
+
+> Through out this subclause, to specialize a template with a template type
+> parameter named `HashProvider`, the corresponding template argument shall
+> meet the `HashProvider` requirements.
+
+> ### `HashProvider` requirements
+
 > ### Header `<hashlib>` synopsis
 
     namespace std::hashlib {  // N4026
