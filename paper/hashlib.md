@@ -5,6 +5,8 @@ pre code { display: block; margin-left: 2em; }
 div { display: block; margin-left: 2em; }
 ins { text-decoration: none; font-weight: bold; background-color: #A0FFA0 }
 del { text-decoration: line-through; background-color: #FFA0A0 }
+table.std { border: 1pt solid black; border-collapse: collapse; width: 70%; }
+table.std td { border-bottom: 1pt solid black; vertical-align: text-top; }
 </style>
 
 <table><tbody>
@@ -196,6 +198,117 @@ This section gives the layout of a wording.
 
 > ### `HashProvider` requirements
 
+> A class `H` meets the `HashProvider` requirements if the expressions shown
+> in the Table below are valid and have the indicated semantics.  In that
+> Table and throughout this section:
+
+>> a) `C` is a trivially copyable type to hold the state of the message
+>>    digest algorithm;
+>>
+>> b) `c` is an lvalue of `C`;
+>>
+>> c) `p` is a value of type `const char*`;
+>>
+>> d) `n` is a value of `size_t`;
+>>
+>> e) `md` is a value of type `unsigned char*`.
+
+<div>
+<table class="std">
+<thead>
+<tr>
+<th style="width: 20%">
+Expression
+</th>
+<th style="width: 20%">
+Return type
+</th>
+<th style="width: 40%">
+Pre/post-condition
+</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td><tt>
+H::context_type
+</tt></td>
+<td><tt>
+C
+</tt></td>
+<td>
+<tt>C</tt> is <tt>CopyConstructible</tt> and <tt>Destructible</tt>.
+</td>
+</tr>
+
+<tr>
+<td><tt>
+H::digest_size
+</tt></td>
+<td><tt>
+size_t
+</tt></td>
+<td>
+</td>
+</tr>
+
+<tr>
+<td><tt>
+H::block_size
+</tt></td>
+<td><tt>
+size_t
+</tt></td>
+<td>
+</td>
+</tr>
+
+<tr>
+<td><tt>
+H::init(&amp;c)
+</tt></td>
+<td><tt>
+</tt></td>
+<td>
+post: <tt>c</tt> is ready to accept data input.
+</td>
+</tr>
+
+<tr>
+<td><tt>
+H::update(&amp;c, p, n)
+</tt></td>
+<td><tt>
+</tt></td>
+<td>
+<i>Requires:</i> <tt>p</tt> points to at least <tt>n</tt>
+contiguous bytes of input.<br>
+Hashes the <tt>n</tt> bytes where the first byte
+is designated by <tt>p</tt>.<br>
+pre: <tt>c</tt> is ready to accept data input.
+</td>
+</tr>
+
+<tr>
+<td><tt>
+H::final(md, &amp;c)
+</tt></td>
+<td><tt>
+</tt></td>
+<td>
+<i>Requires:</i> <tt>md</tt> points to an object having
+contiguous space for <tt>digest_size</tt> bytes of output.<br>
+Places the message digest in <tt>md</tt>.<br>
+pre: <tt>c</tt> is ready to accept data input.<br>
+post: <tt>c</tt> is not ready to accept data input.<br>
+</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
 > ### Header `<hashlib>` synopsis
 
     namespace std::hashlib {  // N4026
@@ -209,21 +322,21 @@ This section gives the layout of a wording.
         typedef typename HashProvider::context_type      context_type;
         typedef std::array<unsigned char, digest_size>   digest_type;
 
-        hasher();
+        hasher() noexcept;
 
         explicit hasher(char const* s);
         explicit hasher(char const* s, size_t n);
 
         template <typename StringLike>
-          explicit hasher(StringLike const& bytes);
+          explicit hasher(StringLike const& bytes) noexcept;
 
         void update(char const* s);
         void update(char const* s, size_t n);
 
         template <typename StringLike>
-          void update(StringLike const& bytes);
+          void update(StringLike const& bytes) noexcept;
 
-        digest_type digest() const;
+        digest_type digest() const noexcept;
 
         template <typename CharT = char,
                   typename Traits = char_traits<CharT>,
@@ -237,11 +350,11 @@ This section gives the layout of a wording.
 
       template <typename HashProvider>
       bool operator==(hasher<HashProvider> const& a,
-                      hasher<HashProvider> const& b);
+                      hasher<HashProvider> const& b) noexcept;
 
       template <typename HashProvider>
       bool operator!=(hasher<HashProvider> const& a,
-                      hasher<HashProvider> const& b);
+                      hasher<HashProvider> const& b) noexcept;
 
       template <typename CharT, typename Traits,
                 typename HashProvider>
