@@ -6,7 +6,7 @@ div { display: block; margin-left: 2em; }
 ins { text-decoration: none; font-weight: bold; background-color: #A0FFA0 }
 del { text-decoration: line-through; background-color: #FFA0A0 }
 table.std { border: 1pt solid black; border-collapse: collapse; width: 70%; }
-table.std td { border-bottom: 1pt solid black; vertical-align: text-top; }
+table.std td { border-top: 1pt solid black; vertical-align: text-top; }
 </style>
 
 <table><tbody>
@@ -224,6 +224,7 @@ Expression
 Return type
 </th>
 <th style="width: 40%">
+Assertion/note<br>
 Pre/post-condition
 </th>
 </tr>
@@ -284,7 +285,7 @@ H::update(&amp;c, p, n)
 <td>
 <i>Requires:</i> <tt>p</tt> points to at least <tt>n</tt>
 contiguous bytes of input.<br>
-Hashes the <tt>n</tt> bytes where the first byte
+<i>Effects:</i> Hashes the <tt>n</tt> bytes whose the first byte
 is designated by <tt>p</tt>.<br>
 pre: <tt>c</tt> is ready to accept data input.
 </td>
@@ -299,7 +300,7 @@ H::final(md, &amp;c)
 <td>
 <i>Requires:</i> <tt>md</tt> points to an object having
 contiguous space for <tt>digest_size</tt> bytes of output.<br>
-Places the message digest in <tt>md</tt>.<br>
+<i>Effects:</i> Places the message digest in <tt>md</tt>.<br>
 pre: <tt>c</tt> is ready to accept data input.<br>
 post: <tt>c</tt> is not ready to accept data input.<br>
 </td>
